@@ -1,0 +1,291 @@
+package com.example.dialog;
+
+import android.os.Bundle;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnMultiChoiceClickListener;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
+public class MainActivity extends Activity {
+	// 声明控件
+	Button queren;// 确认控件
+	Button single;// 单选控件
+	Button multi;// 多选控件
+	Button list;// 列表控件
+	Button defind;// 自定义控件
+	String[] singleList = { "西瓜", "苹果", "草莓", "香蕉" };
+	ProgressDialog dialog;//进度条
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		// 绑定控件（实例化）
+		queren = (Button) findViewById(R.id.btn_1);
+		single = (Button) findViewById(R.id.btn_2);
+		multi = (Button) findViewById(R.id.btn_3);
+		list = (Button) findViewById(R.id.btn_4);
+		defind = (Button) findViewById(R.id.btn_5);
+		// 确定对话框的点击监听（匿名内部类监听）
+		queren.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				dialog();//确认
+			}
+		});
+		// 单选对话框的点击监听（匿名内部类监听）
+		single.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				dialogS();//单选
+			}
+		});
+		// 多选对话框的点击监听（匿名内部类监听）
+		multi.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				dialogM();//多选
+			}
+		});
+		// 列表对话框的点击监听（匿名内部类监听）
+		list.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				dialogL();//列表
+				dialogP();//精确
+				new progressThread().start();
+			}
+		});
+		// 自定义对话框的点击监听（匿名内部类监听）
+		defind.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				dialogF();//自定义
+				dialogV();//模糊
+				
+			}
+		});
+	}
+
+	/*
+	 * 确认对话框
+	 */
+	private void dialog() {
+		// 创建AlertDialog.Builder对象
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		// 设置对话框图标
+		builder.setIcon(R.drawable.ic_launcher);
+		// 设置对话框标题
+		builder.setTitle("确认对话框");
+		// 设置对话框提示消息
+		builder.setMessage("是否取消今天行程？");
+		// 设置对象确定按钮
+		builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				// 在当前的UI界面，吐司内容，吐司的时间，一定要调用show()方法
+				Toast.makeText(MainActivity.this, "你点击了确定按钮",
+						Toast.LENGTH_SHORT).show();
+			}
+		});
+		// 设置对象取消按钮
+		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				Toast.makeText(MainActivity.this, "你点击了取消按钮",
+						Toast.LENGTH_SHORT).show();
+			}
+		});
+		// 获取对话框
+		AlertDialog dialog = builder.create();
+		// 显示对话框
+		dialog.show();
+	}
+
+	/*
+	 * 单选对话框
+	 */
+	private void dialogS() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setIcon(R.drawable.ic_launcher);
+		builder.setTitle("单选对话框");
+		// 设置对象的选项
+		builder.setSingleChoiceItems(singleList, 0,
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						String str = singleList[which];
+						Toast.makeText(MainActivity.this, "我选择了" + str + "了！",
+								Toast.LENGTH_SHORT).show();
+
+					}
+				});
+		// 获取对话框
+		AlertDialog dialogS = builder.create();
+		// 显示对话框
+		dialogS.show();
+	}
+
+	/*
+	 * 多选对话框
+	 */
+	private void dialogM() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setIcon(R.drawable.ic_launcher);
+		builder.setTitle("你的兴趣爱好");
+		final String[] Mulitlist = { "玩游戏", "打球", "看书", "爬山" };
+		builder.setMultiChoiceItems(Mulitlist, null,
+				new OnMultiChoiceClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which,
+							boolean isChecked) {
+						// TODO Auto-generated method stub
+						if (isChecked) {
+							Toast.makeText(MainActivity.this,
+									"我选择了" + Mulitlist[which] + "!",
+									Toast.LENGTH_SHORT).show();
+
+						} else {
+							Toast.makeText(MainActivity.this,
+									"我取消了" + Mulitlist[which] + "!",
+									Toast.LENGTH_SHORT).show();
+						}
+					}
+				});
+
+		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				dialog.dismiss();
+			}
+		});
+
+		// 获取对话框
+		AlertDialog dialogD = builder.create();
+		// 显示对话框
+		dialogD.show();
+	}
+
+	/*
+	 * 列表对话框
+	 */
+
+	private void dialogL() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setIcon(R.drawable.ic_launcher);
+		builder.setTitle("谁动了我的列表");
+		final String[] List = { "玩游戏", "打球", "看书", "爬山" };
+		builder.setItems(List, new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				Toast.makeText(MainActivity.this, "我选了" + List[which] + "！",
+						Toast.LENGTH_SHORT).show();
+
+			}
+		});
+
+		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				dialog.dismiss();
+			}
+		});
+
+		// 获取对话框
+		AlertDialog dialogD = builder.create();
+		// 显示对话框
+		dialogD.show();
+	}
+
+	/*
+	 * 自定义对话框
+	 */
+	private void dialogF() {
+		LayoutInflater inflater = LayoutInflater.from(this);
+		View v = inflater.inflate(R.layout.dialog, null);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setIcon(R.drawable.p2);
+		builder.setTitle("自定义对话框");
+		builder.setView(v);
+		builder.show();
+	}
+	
+	/*
+	 * 模糊进度条
+	 * */
+	private void dialogV(){
+		dialog=new ProgressDialog(this);
+		dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		dialog.setIcon(R.drawable.p2);
+		dialog.setTitle("模糊进度条");
+		dialog.setMessage("正在加载，请稍后...");
+		dialog.setMax(100);
+		dialog.show();
+	}
+	/*
+	 * 精确进度条
+	 * */
+	private void dialogP(){
+		dialog=new ProgressDialog(this);
+		dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		dialog.setIcon(R.drawable.p2);
+		dialog.setTitle("精确进度条");
+		dialog.setMessage("正在加载，请稍后...");
+		dialog.setMax(100);
+		dialog.show();
+	}
+	//内部类
+	private class progressThread extends Thread{
+		int num=0;
+		@Override
+		public void run(){
+			
+			super.run();
+			
+			while(num<=100){
+				try {
+					dialog.setProgress(num);//设置当前进度条的进度
+					Thread.sleep(400);//线程休眠40ms
+					num++;
+				} catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
+				
+			}
+		}
+	}
+}
